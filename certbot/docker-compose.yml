@@ -1,0 +1,12 @@
+version: '2'
+services:
+  certbot:
+    image: quay.io/letsencrypt/letsencrypt:latest
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - ./letsencrypt/cli.ini:/etc/letsencrypt/cli.ini
+    ports:
+      - "80:80"
+      - "443:443"
+    command: certonly --standalone -t -q

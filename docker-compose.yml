@@ -1,0 +1,31 @@
+version: '2'
+services:
+  jwp:
+    image: jwp-advanced
+  nginx:
+    build: ./nginx
+    depends_on:
+      - jwp
+      - redis
+      - mysql
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - NGINX_HOST=${JWP_DOMAIN} www.${JWP_DOMAIN}
+      - NGINX_SSL_CERTIFICATE="/etc/letsencrypt/live/${JWP_DOMAIN}/fullchain.pem"
+      - NGINX_SSL_CERTIFICATE_KEY="/etc/letsencrypt/live/${JWP_DOMAIN}/privkey.pem"
+    links:
+      - jwp:backend1
+      - jwp:backend2
+      - jwp:backend3
+      - mysql:db
+      - redis:redis
+  redis:
+    image: redis
+  mysql:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
